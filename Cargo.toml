@@ -1,0 +1,31 @@
+[package]
+name = "juicerss"
+version = "1.0.0"
+description = "Read-only RSS feed reader"
+edition = "2021"
+license = "BSD-3-Clause"
+readme = "README.md"
+authors = [
+  "tulilirockz <tulilirockz@outlook.com>"
+]
+homepage = "https://github.com/tulilirockz/juicerss"
+repository = "https://github.com/tulilirockz/juicerss"
+keywords = [
+  "rss",
+  "ratatui"
+]
+categories = [
+  "command-line-utilities",
+]
+  
+[dependencies]
+clap = { version = "4.5.17", features = ["derive"] }
+feed-rs = "2.1.1" 
+html2text = "0.13.2"
+ratatui = "0.29.0"
+regex = "1.11.1"
+reqwest = "0.12.8"
+serde = "1.0.213"
+tokio = { version = "1.41.0", features = ["full"] }
+tokio-stream = { version = "0.1.16", features = ["full"] }
+toml = "0.8.19"

@@ -1,0 +1,27 @@
+# use this if your terminal does not support those or you just dont have any nerd fonts
+nerd_fonts = true
+# multi-line list format for the feeds
+list_format = "extended"
+
+# currently a workaround so that parsing strings like "#(RGB)" is not an issue
+# [theme]
+# accent = { red = 0, green = 255, blue = 0 }
+# error = { red = 255, green = 0, blue = 0 }
+# text = { red = 255, green = 255, blue = 255 }
+
+# TOML array containing all your feeds!
+[[feeds]]
+name = "Bazzite Updates"
+filter = ".*f6236f7.*"
+url = "https://github.com/ublue-os/bazzite/releases.atom"
+enabled = true
+ 
+[[feeds]]
+name = "Bluefin Updates"
+url = "https://github.com/ublue-os/bluefin/releases.atom"
+filter = ".*v3.0.*"
+enabled = true
+
+[[feeds]]
+url = "https://example.org"
+enabled = false
