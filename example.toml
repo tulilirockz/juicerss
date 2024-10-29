@@ -12,14 +12,12 @@ list_format = "extended"
 # TOML array containing all your feeds!
 [[feeds]]
 name = "Bazzite Updates"
-filter = ".*f6236f7.*"
 url = "https://github.com/ublue-os/bazzite/releases.atom"
 enabled = true
  
 [[feeds]]
 name = "Bluefin Updates"
 url = "https://github.com/ublue-os/bluefin/releases.atom"
-filter = ".*v3.0.*"
 enabled = true
 
 [[feeds]]

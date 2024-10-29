@@ -7,6 +7,8 @@
 
 [![Copr RPM build status](https://copr.fedorainfracloud.org/coprs/tulilirockz/juicerss/package/juicerss/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/tulilirockz/juicerss/package/juicerss/)
 
+![Demo](./demo.gif)
+
 Read-only first RSS/Atom feed reader made for [Universal Blue](https://universal-blue.org) meant to be as simple and straight-forward as possible, and, 
 as this is a changelog-first reader, it purposefully does not contain common features on RSS readers, like "read" articles, favorites, and others.
 
