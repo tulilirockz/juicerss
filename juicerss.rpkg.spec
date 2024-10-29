@@ -22,7 +22,6 @@ Read-only RSS feed reader.}
 %description %{_description}
 
 %prep
-{{{ git_dir_setup_macro }}}
 %autosetup -n %{crate}-%{version} -p1
 %cargo_prep
 
