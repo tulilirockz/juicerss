@@ -9,7 +9,7 @@ use ratatui::{
     widgets::{Block, List, ListItem, ListState, Paragraph, StatefulWidget, Widget, Wrap},
     DefaultTerminal,
 };
-use std::{default, fmt::Debug, io::Cursor};
+use std::{fmt::Debug, io::Cursor};
 
 #[derive(Debug)]
 struct AppTheme {
@@ -51,13 +51,16 @@ impl Widget for &mut App {
 }
 
 impl App {
+    // this does not matter but it gets mad when you dont have a number here
+    const LARGE_NUMBER: usize = 5000;
+
     pub fn new(feeds: Vec<Option<FeedWithCustom>>, config: Config) -> Self {
-        App {
+        Self {
             feeds,
             exit: false,
             screen: CurrentScreen::Selection,
             selected_feed_idx: 0,
-            list_state: default::Default::default(),
+            list_state: ListState::default(),
             selected_entry: None,
             scroll_number: (0, 0),
             buffered_render: None,
@@ -82,7 +85,7 @@ impl App {
         }
     }
 
-    fn render_article(&mut self, area: Rect, buf: &mut Buffer) {
+    fn render_article(&self, area: Rect, buf: &mut Buffer) {
         let init_block = Block::bordered()
             .border_type(ratatui::widgets::BorderType::Rounded)
             .title_position(ratatui::widgets::block::Position::Top)
@@ -111,7 +114,7 @@ impl App {
         Paragraph::new(
             self.buffered_render
                 .clone()
-                .unwrap_or("Failed rendering article".to_string()),
+                .unwrap_or_else(|| "Failed rendering article".to_string()),
         )
         .scroll(self.scroll_number)
         .wrap(Wrap { trim: true })
@@ -151,7 +154,7 @@ impl App {
                     if self.config.nerd_fonts { "" } else { "<" }
                 ))
                 .left_aligned(),
-            )
+            );
         }
 
         if let Some(current_feed) = self.feeds[self.selected_feed_idx].clone() {
@@ -224,7 +227,7 @@ impl App {
         }
     }
 
-    pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<(), ()> {
+    pub fn run(mut self, mut terminal: DefaultTerminal) {
         while !self.exit {
             terminal
                 .draw(|frame| frame.render_widget(&mut self, frame.area()))
@@ -236,7 +239,6 @@ impl App {
                 }
             };
         }
-        Ok(())
     }
 
     fn handle_key_article(&mut self, key: KeyEvent) {
@@ -255,37 +257,37 @@ impl App {
                 if self.scroll_number.0.checked_sub(10).is_none() {
                     return;
                 }
-                self.scroll_number = (self.scroll_number.0 - 10, self.scroll_number.1)
+                self.scroll_number = (self.scroll_number.0 - 10, self.scroll_number.1);
             }
             KeyCode::Up => {
                 if self.scroll_number.0.checked_sub(1).is_none() {
                     return;
                 }
-                self.scroll_number = (self.scroll_number.0 - 1, self.scroll_number.1)
+                self.scroll_number = (self.scroll_number.0 - 1, self.scroll_number.1);
             }
             KeyCode::PageDown => {
                 if self.scroll_number.0.checked_add(10).is_none() {
                     return;
                 }
-                self.scroll_number = (self.scroll_number.0 + 10, self.scroll_number.1)
+                self.scroll_number = (self.scroll_number.0 + 10, self.scroll_number.1);
             }
             KeyCode::Down => {
                 if self.scroll_number.0.checked_add(1).is_none() {
                     return;
                 }
-                self.scroll_number = (self.scroll_number.0 + 1, self.scroll_number.1)
+                self.scroll_number = (self.scroll_number.0 + 1, self.scroll_number.1);
             }
             KeyCode::Left => {
                 if self.scroll_number.1.checked_sub(1).is_none() {
                     return;
                 }
-                self.scroll_number = (self.scroll_number.0, self.scroll_number.1 - 1)
+                self.scroll_number = (self.scroll_number.0, self.scroll_number.1 - 1);
             }
             KeyCode::Right => {
                 if self.scroll_number.1.checked_add(1).is_none() {
                     return;
                 }
-                self.scroll_number = (self.scroll_number.0, self.scroll_number.1 + 1)
+                self.scroll_number = (self.scroll_number.0, self.scroll_number.1 + 1);
             }
 
             _ => {}
@@ -339,16 +341,12 @@ impl App {
                     .content
                     .unwrap()
                     .body
-                    .unwrap()
-                    .to_string();
+                    .unwrap();
 
                 let cursor = Cursor::new(strbuf);
 
-                // this does not matter but it gets mad when you dont have a number here
-                const LARGE_NUMBER: usize = 5000;
-
                 let readval =
-                    html2text::from_read(cursor, LARGE_NUMBER).expect("Failed reading HTML");
+                    html2text::from_read(cursor, Self::LARGE_NUMBER).expect("Failed reading HTML");
 
                 self.buffered_render = Some(readval);
             }

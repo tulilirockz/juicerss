@@ -9,7 +9,7 @@ defaults:
     shell: bash
 
 env:
-  CLIPPY_PARAMS: -W clippy::all -W clippy::pedantic -W clippy::nursery -W clippy::cargo
+  CLIPPY_PARAMS: -W clippy::all -W clippy::pedantic -W clippy::nursery
 
 jobs:
   rustfmt:

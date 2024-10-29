@@ -19,7 +19,7 @@ impl Default for FeedConfigEntry {
     fn default() -> Self {
         Self {
             name: None,
-            url: "".to_string(),
+            url: String::new(),
             enabled: true,
             filter: None,
         }
@@ -91,11 +91,11 @@ impl Default for ThemeConfiguration {
 
 impl Default for Config {
     fn default() -> Self {
-        Config {
+        Self {
             feeds: None,
             nerd_fonts: true,
             list_format: ListFormat::Compact,
-            theme: Default::default(),
+            theme: ThemeConfiguration::default(),
         }
     }
 }
@@ -128,15 +128,18 @@ struct FeedResponse {
 async fn main() -> Result<(), ()> {
     let args = Cli::parse();
 
-    let app_config: Config = if let Some(config) = args.config {
+    let app_config: Config = args.config.map_or_else(Config::default, |config| {
         let config_content =
             std::fs::read_to_string(config).expect("Failed reading configuration file");
         toml::from_str(&config_content).expect("Failed parsing configuration file")
-    } else {
-        Config::default()
-    };
+    });
 
-    let config_feeds: Option<Vec<FeedConfigEntry>> = if !args.feeds.is_empty() {
+    let config_feeds: Option<Vec<FeedConfigEntry>> = if args.feeds.is_empty() {
+        app_config
+            .feeds
+            .clone()
+            .map(|feeds| feeds.into_iter().filter(|e| e.enabled).collect())
+    } else {
         Some(
             args.feeds
                 .iter()
@@ -146,11 +149,6 @@ async fn main() -> Result<(), ()> {
                 })
                 .collect(),
         )
-    } else {
-        app_config
-            .feeds
-            .clone()
-            .map(|feeds| feeds.into_iter().filter(|e| e.enabled).collect())
     };
 
     let mut set = JoinSet::new();
@@ -177,27 +175,22 @@ async fn main() -> Result<(), ()> {
         .map(|response| {
             let parsed = feed_rs::parser::parse(response.body.as_bytes()).ok();
 
-            let parsed_feed = match parsed {
-                Some(f) => f,
-                None => return None,
-            };
+            let parsed_feed = parsed?;
 
             let filtered_entries: Vec<Entry> = parsed_feed
                 .clone()
                 .entries
                 .into_iter()
                 .filter(|entry| {
-                    let pattern = match &response.filter {
-                        Some(r) => r,
-                        None => return true,
+                    let Some(pattern) = &response.filter else {
+                        return true;
                     };
 
-                    let title = match &entry.title {
-                        Some(t) => t,
-                        None => return false,
+                    let Some(title) = &entry.title else {
+                        return false;
                     };
 
-                    Regex::new(pattern)
+                    Regex::new(pattern.clone().as_str())
                         .unwrap_or_else(|_| panic!("Invalid regex specified in {}", response.url))
                         .is_match(&title.content)
                 })
@@ -212,7 +205,7 @@ async fn main() -> Result<(), ()> {
         .collect();
 
     let terminal = ratatui::init();
-    let app_result = App::new(feeds, app_config).run(terminal);
+    App::new(feeds, app_config).run(terminal);
     ratatui::restore();
-    app_result
+    Ok(())
 }
