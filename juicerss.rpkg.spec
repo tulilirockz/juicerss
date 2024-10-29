@@ -3,7 +3,7 @@
 %global cargo_install_lib 0
 
 Name:           juicerss
-Version:        1.0.0
+Version:        1.0.1
 Release:        %autorelease
 Summary:        Read-only RSS feed reader
 
@@ -12,7 +12,7 @@ License:  BSD-3-Clause
 
 URL:            https://github.com/tulilirockz/juicerss
 VCS:			{{{ git_dir_vcs }}}
-Source:			{{{ git_dir_pack }}}
+Source:			https://github.com/tulilirockz/juicerss/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
