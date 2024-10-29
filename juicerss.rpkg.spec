@@ -22,7 +22,7 @@ Read-only RSS feed reader.}
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{version} -p1
+%autosetup -p1
 %cargo_prep
 
 %generate_buildrequires
