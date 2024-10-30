@@ -14,6 +14,29 @@ as this is a changelog-first reader, it purposefully does not contain common fea
 
 Configuring should be done as [the example included in this repo](https://github.com/tulilirockz/juicerss/blob/main/example.toml)
 
+## Installing
+
+### cURL
+
+If you are on any distro that does not have a package for this program, you can fetch the binary directly from releases
+
+```
+export VERSION=v1.0.3
+wget -P $HOME/.local/bin https://github.com/tulilirockz/juicerss/releases/download/${VERSION}/juicerss-${VERSION}.x86_64
+mv $HOME/.local/bin/juicerss-${VERSION}.x86_64 $HOME/.local/bin/juicerss
+chmod +x $HOME/.local/bin/juicerss
+# Then make sure to have $HOME/.local/bin in your PATH variable
+```
+
+### Fedora
+
+On Fedora / RPM-based distros you can install this by using the supplied [COPR](https://copr.fedorainfracloud.org/coprs/tulilirockz/juicerss)
+
+```
+sudo dnf copr enable tulilirockz/juicerss
+sudo dnf install -y juicerss
+```
+
 ## Todo
 
 - Mouse support
