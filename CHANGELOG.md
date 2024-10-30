@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4](https://github.com/tulilirockz/juicerss/compare/v1.0.3...v1.0.4) - 2024-10-30
+
+### Other
+
+- initial installation instructions
+- *(spec)* bump version to 1.0.3
+- *(release-publish)* properly push tag
+- *(release-publish)* make it so workflow_dispatch can specify tag
+- publish artifacts on release
+
 ## [1.0.3](https://github.com/tulilirockz/juicerss/compare/v1.0.2...v1.0.3) - 2024-10-30
 
 ### Fixed
