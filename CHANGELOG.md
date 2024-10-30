@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2](https://github.com/tulilirockz/juicerss/compare/v1.0.1...v1.0.2) - 2024-10-30
+
+### Fixed
+
+- *(spec)* use vendored dependencies for building
+
+### Other
+
+- release-publish workflow for binaries and vendor
+- *(deps)* update actions/checkout action to v4
+
 ## [1.0.1](https://github.com/tulilirockz/juicerss/compare/v1.0.0...v1.0.1) - 2024-10-29
 
 ### Other
