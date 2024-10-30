@@ -29,23 +29,14 @@ jobs:
       - name: Copy binary to dist
         run: |
           mkdir -p dist
-          cp target/release/juicerss dist/juicerss-${{ github.ref_name }}.x86_64
+          cp target/release/juicerss juicerss-${{ github.ref_name }}.x86_64
 
       - name: Package vendor tarball
-        run: tar -czf dist/vendor-${{ github.ref_name }}.tar.gz vendor
+        run: tar -czf vendor-${{ github.ref_name }}.tar.gz vendor
         
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2.0.8
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: dist/juicerss-${{ github.ref_name }}.x86_64
-          asset_name: juicerss-${{ github.ref_name }}.x86_64
-          asset_content_type: application/gzip
-
-      - name: Upload Vendor Asset
-        uses: softprops/action-gh-release@v2.0.8
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: dist/vendor-${{ github.ref_name }}.tar.gz
-          asset_name: vendor-${{ github.ref_name }}.tar.gz
-          asset_content_type: application/gzip
+          files: |
+            juicerss-${{ github.ref_name }}.x86_64
+            vendor-${{ github.ref_name }}.tar.xz
