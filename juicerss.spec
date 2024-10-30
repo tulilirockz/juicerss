@@ -9,7 +9,7 @@
 %global crate juicerss
 
 Name:           juicerss
-Version:        1.0.1
+Version:        1.0.3
 Release:        %autorelease
 Summary:        Read-only RSS feed reader
 
