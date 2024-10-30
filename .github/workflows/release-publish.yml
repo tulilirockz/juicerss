@@ -2,7 +2,11 @@ name: Publish Release
 
 on:
   release:
-  workflow_dispatch:    
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The tag to use for the release'
+        required: false
 
 jobs:
   build:
@@ -28,14 +32,14 @@ jobs:
       - name: Copy binary to dist
         run: |
           mkdir -p dist
-          cp target/release/juicerss juicerss-${{ github.ref_name }}.x86_64
+          cp target/release/juicerss juicerss-${{ github.event.inputs.tag || github.ref_name }}.x86_64
 
       - name: Package vendor tarball
-        run: tar -czf vendor-${{ github.ref_name }}.tar.gz vendor
+        run: tar -czf vendor-${{ github.event.inputs.tag || github.ref_name }}.tar.gz vendor
         
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2.0.8
         with:
           files: |
-            juicerss-${{ github.ref_name }}.x86_64
-            vendor-${{ github.ref_name }}.tar.xz
+            juicerss-${{ github.event.inputs.tag || github.ref_name }}.x86_64
+            vendor-${{ github.event.inputs.tag || github.ref_name }}.tar.gz
