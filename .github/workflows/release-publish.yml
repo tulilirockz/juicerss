@@ -38,7 +38,7 @@ jobs:
         run: tar -czf vendor-${{ github.event.inputs.tag || github.ref_name }}.tar.gz vendor
         
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2.0.9
         with:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           files: |
