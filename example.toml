@@ -3,11 +3,29 @@ nerd_fonts = true
 # multi-line list format for the feeds
 list_format = "extended"
 
+# [alignment]
+# article = "left"
+# rss_list = "left"
+
 # currently a workaround so that parsing strings like "#(RGB)" is not an issue
 # [theme]
 # accent = { red = 0, green = 255, blue = 0 }
 # error = { red = 255, green = 0, blue = 0 }
 # text = { red = 255, green = 255, blue = 255 }
+
+# Used when reading articles
+# [scrolling]
+# x_factor = 1
+# x_lines = 1
+# y_factor = 1
+# y_lines = 1
+
+# (Experimental) External renderer if you want to render the articles with something
+# Itll run as if it were in a NoTTY context (no styling, all that stuff)
+# [renderer]
+# enabled = true # (optional)
+# binary = "glow" # Supports paths
+# args = ["--style", "dark"] 
 
 # TOML array containing all your feeds!
 [[feeds]]

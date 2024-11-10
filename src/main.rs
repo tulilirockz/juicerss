@@ -1,104 +1,12 @@
 use clap::Parser;
 use feed_rs::model::{Entry, Feed};
+mod config;
 mod tui;
+use config::Config;
+use config::FeedConfigEntry;
 use regex::Regex;
-use serde::Deserialize;
 use tokio::task::JoinSet;
 use tui::App;
-
-#[derive(Debug, Deserialize, Clone)]
-struct FeedConfigEntry {
-    name: Option<String>,
-    url: String,
-    #[serde(default)]
-    enabled: bool,
-    filter: Option<String>,
-}
-
-impl Default for FeedConfigEntry {
-    fn default() -> Self {
-        Self {
-            name: None,
-            url: String::new(),
-            enabled: true,
-            filter: None,
-        }
-    }
-}
-
-// Purely just a workaround since it is very annoying to parse stuff from #(whatever)
-// TODO: Parse string properly without it being like this
-#[derive(Debug, Default, Deserialize, Clone)]
-struct ColorConfiguration {
-    red: u8,
-    green: u8,
-    blue: u8,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-// RGB values
-struct ThemeConfiguration {
-    #[serde(default)]
-    accent: ColorConfiguration,
-    #[serde(default)]
-    text: ColorConfiguration,
-    #[serde(default)]
-    error: ColorConfiguration,
-}
-
-#[derive(Debug, Default, Deserialize, Clone)]
-pub enum ListFormat {
-    #[default]
-    #[serde(alias = "compact", alias = "default")]
-    Compact,
-    #[serde(alias = "extended")]
-    Extended,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-pub struct Config {
-    #[serde(default)]
-    nerd_fonts: bool,
-    #[serde(default)]
-    list_format: ListFormat,
-    #[serde(default)]
-    feeds: Option<Vec<FeedConfigEntry>>,
-    #[serde(default)]
-    theme: ThemeConfiguration,
-}
-
-impl Default for ThemeConfiguration {
-    fn default() -> Self {
-        Self {
-            error: ColorConfiguration {
-                red: 255,
-                green: 0,
-                blue: 0,
-            },
-            accent: ColorConfiguration {
-                red: 83,
-                green: 117,
-                blue: 252,
-            },
-            text: ColorConfiguration {
-                red: 0xFF,
-                green: 0xFF,
-                blue: 0xFF,
-            },
-        }
-    }
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            feeds: None,
-            nerd_fonts: true,
-            list_format: ListFormat::Compact,
-            theme: ThemeConfiguration::default(),
-        }
-    }
-}
 
 #[derive(Debug, Clone)]
 pub struct FeedWithCustom {

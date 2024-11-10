@@ -1,3 +1,4 @@
+use crate::config::ListFormat;
 use crate::{Config, FeedWithCustom};
 
 use ratatui::{
@@ -9,6 +10,8 @@ use ratatui::{
     widgets::{Block, List, ListItem, ListState, Paragraph, StatefulWidget, Widget, Wrap},
     DefaultTerminal,
 };
+use std::io::Write;
+use std::process::{Command, Stdio};
 use std::{fmt::Debug, io::Cursor};
 
 #[derive(Debug)]
@@ -16,6 +19,116 @@ struct AppTheme {
     accent: Style,
     text: Style,
     error: Style,
+}
+
+#[derive(Debug, Clone)]
+pub struct ScrollUnitHorizontal {
+    pub value: u16,
+    factor: u16,
+}
+#[derive(Debug, Clone)]
+pub struct ScrollUnitVertical {
+    pub value: u16,
+    factor: u16,
+}
+
+pub enum ScrollDirectionVertical {
+    Up,
+    Down,
+}
+pub enum ScrollDirectionHorizontal {
+    Left,
+    Right,
+}
+
+impl ScrollableUnit<ScrollDirectionVertical> for ScrollUnitVertical {
+    fn scroll(&mut self, value: u16, direction: ScrollDirectionVertical) -> Result<(), String> {
+        match direction {
+            ScrollDirectionVertical::Up => {
+                self.value = self
+                    .value
+                    .checked_sub(value)
+                    .ok_or("Failed scrolling, whatever")?
+                    * self.factor;
+                Ok(())
+            }
+            ScrollDirectionVertical::Down => {
+                self.value = self
+                    .value
+                    .checked_add(value)
+                    .ok_or("Failed scrolling, whatever")?
+                    * self.factor;
+                Ok(())
+            }
+        }
+    }
+    fn reset(&mut self) {
+        self.value = 0;
+    }
+}
+
+impl ScrollableUnit<ScrollDirectionHorizontal> for ScrollUnitHorizontal {
+    fn scroll(&mut self, value: u16, direction: ScrollDirectionHorizontal) -> Result<(), String> {
+        match direction {
+            ScrollDirectionHorizontal::Left => {
+                self.value = self
+                    .value
+                    .checked_sub(value)
+                    .ok_or("Failed scrolling, whatever")?
+                    * self.factor;
+                Ok(())
+            }
+            ScrollDirectionHorizontal::Right => {
+                self.value = self
+                    .value
+                    .checked_add(value)
+                    .ok_or("Failed scrolling, whatever")?
+                    * self.factor;
+                Ok(())
+            }
+        }
+    }
+    fn reset(&mut self) {
+        self.value = 0;
+    }
+}
+
+impl Default for ScrollUnitVertical {
+    fn default() -> Self {
+        Self {
+            value: 0,
+            factor: 1,
+        }
+    }
+}
+impl Default for ScrollUnitHorizontal {
+    fn default() -> Self {
+        Self {
+            value: 0,
+            factor: 1,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ScrollState(ScrollUnitVertical, ScrollUnitHorizontal);
+
+pub trait ScrollableUnit<Direction> {
+    fn scroll(&mut self, value: u16, direction: Direction) -> Result<(), String>;
+    fn reset(&mut self);
+}
+
+impl From<ScrollState> for (u16, u16) {
+    fn from(value: ScrollState) -> Self {
+        (value.0.value, value.1.value)
+    }
+}
+
+impl ScrollState {
+    fn reset(&mut self) {
+        self.0.reset();
+        self.1.reset();
+    }
 }
 
 #[derive(Debug)]
@@ -26,7 +139,7 @@ pub struct App {
     selected_feed_idx: usize,
     feeds: Vec<Option<FeedWithCustom>>,
     exit: bool,
-    scroll_number: (u16, u16),
+    scroll_number: ScrollState,
     list_state: ListState,
     selected_entry: Option<feed_rs::model::Entry>,
     buffered_render: Option<String>,
@@ -51,7 +164,6 @@ impl Widget for &mut App {
 }
 
 impl App {
-    // this does not matter but it gets mad when you dont have a number here
     const LARGE_NUMBER: usize = 5000;
 
     pub fn new(feeds: Vec<Option<FeedWithCustom>>, config: Config) -> Self {
@@ -62,7 +174,16 @@ impl App {
             selected_feed_idx: 0,
             list_state: ListState::default(),
             selected_entry: None,
-            scroll_number: (0, 0),
+            scroll_number: ScrollState(
+                ScrollUnitVertical {
+                    value: config.scrolling.y_lines,
+                    factor: config.scrolling.y_factor,
+                },
+                ScrollUnitHorizontal {
+                    value: config.scrolling.x_lines,
+                    factor: config.scrolling.x_factor,
+                },
+            ),
             buffered_render: None,
             theme: AppTheme {
                 error: Style::new().fg(ratatui::style::Color::Rgb(
@@ -116,7 +237,7 @@ impl App {
                 .clone()
                 .unwrap_or_else(|| "Failed rendering article".to_string()),
         )
-        .scroll(self.scroll_number)
+        .scroll(self.scroll_number.clone().into())
         .wrap(Wrap { trim: true })
         .style(self.theme.text)
         .block(init_block)
@@ -190,8 +311,8 @@ impl App {
                         },
                         e.updated.unwrap().date_naive(),
                         match self.config.list_format {
-                            crate::ListFormat::Compact => "",
-                            crate::ListFormat::Extended => "\n",
+                            ListFormat::Compact => "",
+                            ListFormat::Extended => "\n",
                         },
                         if self.config.nerd_fonts {
                             "󰦨"
@@ -200,8 +321,8 @@ impl App {
                         },
                         e.title.clone().unwrap().content,
                         match self.config.list_format {
-                            crate::ListFormat::Compact => "",
-                            crate::ListFormat::Extended => "\n\n",
+                            ListFormat::Compact => "",
+                            ListFormat::Extended => "\n\n",
                         }
                     ))
                 })
@@ -250,44 +371,44 @@ impl App {
             KeyCode::Char('q') | KeyCode::Esc => {
                 self.screen = CurrentScreen::Selection;
                 self.selected_entry = None;
-                self.scroll_number = (0, 0);
+                self.scroll_number.reset();
             }
-            KeyCode::Char('r') => self.scroll_number = (0, 0),
+            KeyCode::Char('r') => self.scroll_number.reset(),
             KeyCode::PageUp => {
-                if self.scroll_number.0.checked_sub(10).is_none() {
-                    return;
-                }
-                self.scroll_number = (self.scroll_number.0 - 10, self.scroll_number.1);
-            }
-            KeyCode::Up => {
-                if self.scroll_number.0.checked_sub(1).is_none() {
-                    return;
-                }
-                self.scroll_number = (self.scroll_number.0 - 1, self.scroll_number.1);
+                self.scroll_number
+                    .0
+                    .scroll(10, ScrollDirectionVertical::Up)
+                    .ok();
             }
             KeyCode::PageDown => {
-                if self.scroll_number.0.checked_add(10).is_none() {
-                    return;
-                }
-                self.scroll_number = (self.scroll_number.0 + 10, self.scroll_number.1);
+                self.scroll_number
+                    .0
+                    .scroll(10, ScrollDirectionVertical::Down)
+                    .ok();
+            }
+            KeyCode::Up => {
+                self.scroll_number
+                    .0
+                    .scroll(1, ScrollDirectionVertical::Up)
+                    .ok();
             }
             KeyCode::Down => {
-                if self.scroll_number.0.checked_add(1).is_none() {
-                    return;
-                }
-                self.scroll_number = (self.scroll_number.0 + 1, self.scroll_number.1);
+                self.scroll_number
+                    .0
+                    .scroll(1, ScrollDirectionVertical::Down)
+                    .ok();
             }
             KeyCode::Left => {
-                if self.scroll_number.1.checked_sub(1).is_none() {
-                    return;
-                }
-                self.scroll_number = (self.scroll_number.0, self.scroll_number.1 - 1);
+                self.scroll_number
+                    .1
+                    .scroll(1, ScrollDirectionHorizontal::Left)
+                    .ok();
             }
             KeyCode::Right => {
-                if self.scroll_number.1.checked_add(1).is_none() {
-                    return;
-                }
-                self.scroll_number = (self.scroll_number.0, self.scroll_number.1 + 1);
+                self.scroll_number
+                    .1
+                    .scroll(1, ScrollDirectionHorizontal::Right)
+                    .ok();
             }
 
             _ => {}
@@ -345,8 +466,28 @@ impl App {
 
                 let cursor = Cursor::new(strbuf);
 
-                let readval =
+                let mut readval =
                     html2text::from_read(cursor, Self::LARGE_NUMBER).expect("Failed reading HTML");
+
+                if let Some(renderer) = &self.config.renderer {
+                    let mut renderer_command = Command::new(renderer.binary.clone())
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .args(renderer.args.clone().unwrap_or_else(std::vec::Vec::new))
+                        .spawn()
+                        .expect("Failure running renderer command");
+
+                    renderer_command
+                        .stdin
+                        .as_mut()
+                        .unwrap()
+                        .write_all(readval.as_bytes())
+                        .unwrap();
+
+                    readval =
+                        String::from_utf8(renderer_command.wait_with_output().unwrap().stdout)
+                            .unwrap();
+                }
 
                 self.buffered_render = Some(readval);
             }
