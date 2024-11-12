@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0](https://github.com/tulilirockz/juicerss/compare/v1.0.3...v1.1.0) - 2024-11-12
+
+### Added
+
+- alignment configuration for articles
+- separate configuration into its own module and add scrolling factor + line configuration
+
+### Fixed
+
+- *(deps)* update rust crate serde to v1.0.215
+- *(deps)* update rust crate html2text to v0.13.3
+- *(deps)* update rust crate tokio to v1.41.1
+
+### Other
+
+- *(deps)* update softprops/action-gh-release action to v2.1.0
+- *(deps)* update marcoieni/release-plz-action action to v0.5.83
+- *(deps)* update softprops/action-gh-release action to v2.0.9
+- initial installation instructions
+- *(spec)* bump version to 1.0.3
+- *(release-publish)* properly push tag
+- *(release-publish)* make it so workflow_dispatch can specify tag
+- publish artifacts on release
+
 ## [1.0.3](https://github.com/tulilirockz/juicerss/compare/v1.0.2...v1.0.3) - 2024-10-30
 
 ### Fixed
