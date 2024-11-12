@@ -9,16 +9,16 @@
 %global crate juicerss
 
 Name:           juicerss
-Version:        1.0.3
+Version:        1.1.0
 Release:        %autorelease
 Summary:        Read-only RSS feed reader
 
 License:        BSD-3-Clause
 URL:            https://crates.io/crates/juicerss
 Source:         %{crates_source}
-Source:			https://github.com/tulilirockz/juicerss/releases/download/v%{version}/vendor-v%{version}.tar.gz
+Source:         https://github.com/tulilirockz/juicerss/releases/download/v%{version}/vendor-v%{version}.tar.gz
 
-BuildRequires:	openssl-devel
+BuildRequires:  openssl-devel
 BuildRequires:  cargo-rpm-macros >= 26
 
 %global _description %{expand:
