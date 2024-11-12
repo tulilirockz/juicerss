@@ -237,6 +237,7 @@ impl App {
                 .clone()
                 .unwrap_or_else(|| "Failed rendering article".to_string()),
         )
+        .alignment(self.config.alignment.article.clone().into())
         .scroll(self.scroll_number.clone().into())
         .wrap(Wrap { trim: true })
         .style(self.theme.text)

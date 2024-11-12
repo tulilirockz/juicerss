@@ -64,6 +64,37 @@ pub struct ScrollingConfiguration {
     pub y_lines: u16,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub enum SupportedAlignment {
+    #[serde(alias = "left", alias = "default")]
+    Left,
+    #[serde(alias = "right")]
+    Right,
+    #[serde(alias = "center")]
+    Center,
+}
+
+impl Default for SupportedAlignment {
+    fn default() -> Self {
+        Self::Left
+    }
+}
+
+impl From<SupportedAlignment> for ratatui::layout::Alignment {
+    fn from(value: SupportedAlignment) -> Self {
+        match value {
+            SupportedAlignment::Left => Self::Left,
+            SupportedAlignment::Right => Self::Right,
+            SupportedAlignment::Center => Self::Center,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Default)]
+pub struct AlignmentConfiguration {
+    pub article: SupportedAlignment,
+}
+
 impl Default for ScrollingConfiguration {
     fn default() -> Self {
         Self {
@@ -89,6 +120,8 @@ pub struct Config {
     pub renderer: Option<RendererConfiguration>,
     #[serde(default)]
     pub scrolling: ScrollingConfiguration,
+    #[serde(default)]
+    pub alignment: AlignmentConfiguration,
 }
 
 impl Default for ThemeConfiguration {
@@ -122,6 +155,7 @@ impl Default for Config {
             theme: ThemeConfiguration::default(),
             renderer: None,
             scrolling: ScrollingConfiguration::default(),
+            alignment: AlignmentConfiguration::default(),
         }
     }
 }

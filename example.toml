@@ -3,9 +3,8 @@ nerd_fonts = true
 # multi-line list format for the feeds
 list_format = "extended"
 
-# [alignment]
-# article = "left"
-# rss_list = "left"
+[alignment]
+article = "center"
 
 # currently a workaround so that parsing strings like "#(RGB)" is not an issue
 # [theme]
