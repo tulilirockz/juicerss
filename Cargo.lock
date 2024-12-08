@@ -349,9 +349,9 @@ checksum = "e8c02a5121d4ea3eb16a80748c74f5549a5665e4c21333c6098f283870fbdea6"
 
 [[package]]
 name = "feed-rs"
-version = "2.2.0"
+version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d57df0b823b3055c667ddde499736e0d8d7d486b269454eebd96a0fdd59ce051"
+checksum = "850b6e1f3d306978db1b04d053f756eaa23268f3c5dcc7c85db45a4b3aabdd29"
 dependencies = [
  "chrono",
  "mediatype",
@@ -1237,9 +1237,9 @@ dependencies = [
 
 [[package]]
 name = "quick-xml"
-version = "0.37.0"
+version = "0.37.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffbfb3ddf5364c9cfcd65549a1e7b801d0e8d1b14c1a1590a6408aa93cfbfa84"
+checksum = "f22f29bdff3987b4d8632ef95fd6424ec7e4e0a57e2f4fc63e489e75357f6a03"
 dependencies = [
  "encoding_rs",
  "memchr",
@@ -2002,9 +2002,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 
 [[package]]
 name = "url"
-version = "2.5.3"
+version = "2.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d157f1b96d14500ffdc1f10ba712e780825526c03d9a49b4d0324b0d9113ada"
+checksum = "32f8b686cadd1473f4bd0117a5d28d36b1ade384ea9b5069a1c40aefed7fda60"
 dependencies = [
  "form_urlencoded",
  "idna",
