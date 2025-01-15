@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1](https://github.com/tulilirockz/juicerss/compare/v1.1.0...v1.1.1) - 2025-01-15
+
+### Fixed
+
+- *(deps)* update rust crate tokio to v1.43.0
+- *(deps)* update rust crate feed-rs to v2.3.1
+- *(deps)* update rust crate tokio-stream to v0.1.17
+- *(deps)* update rust crate serde to v1.0.216
+- *(deps)* update rust crate feed-rs to v2.3.0
+- *(deps)* update rust crate clap to v4.5.23
+- *(deps)* update rust crate clap to v4.5.22
+- *(deps)* update rust crate tokio to v1.42.0
+- *(deps)* update rust crate html2text to v0.13.5
+- *(deps)* update rust crate html2text to v0.13.4
+- *(deps)* update rust crate clap to v4.5.21
+- *(deps)* update rust crate feed-rs to v2.2.0
+
+### Other
+
+- *(deps)* update marcoieni/release-plz-action action to v0.5.88
+- *(deps)* update marcoieni/release-plz-action action to v0.5.86
+- *(deps)* update softprops/action-gh-release action to v2.2.0
+- *(deps)* update marcoieni/release-plz-action action to v0.5.85
+- *(deps)* update marcoieni/release-plz-action action to v0.5.84
+- bump spec file release
+
 ## [1.1.0](https://github.com/tulilirockz/juicerss/compare/v1.0.3...v1.1.0) - 2024-11-12
 
 ### Added
