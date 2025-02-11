@@ -21,7 +21,7 @@ categories = [
 [dependencies]
 clap = { version = "4.5.17", features = ["derive"] }
 feed-rs = "2.1.1" 
-html2text = "0.13.2"
+html2text = "0.14.0"
 ratatui = "0.29.0"
 regex = "1.11.1"
 reqwest = "0.12.8"
